@@ -65,5 +65,20 @@ namespace YourFavECommerce.Api.Controllers
 
             return NotFound();
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete([FromRoute] int id) {
+            var categroy = _context.Categories.Find(id);
+            if(categroy == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categories.Remove(categroy);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
     }
 }
