@@ -39,6 +39,9 @@ namespace YourFavECommerce.Api.Controllers
         [HttpPost("")]
         public IActionResult Create([FromBody] CatgeoryRequest category)
         {
+            //if (!ModelState.IsValid)
+            //    return ValidationProblem(ModelState);
+
             var categoryInDb = _categoryService.Add(category.Adapt<Category>());
 
             //return Created($"{Request.Scheme}://{Request.Host}/api/Categories/{category.Id}", category);
@@ -52,6 +55,9 @@ namespace YourFavECommerce.Api.Controllers
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromBody] CatgeoryRequest category)
         {
+            //if (!ModelState.IsValid)
+            //    return ValidationProblem(ModelState);
+
             var categroyInDb = _categoryService.Edit(id, category.Adapt<Category>());
 
             if (categroyInDb)
