@@ -1,65 +1,61 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using YourFavECommerce.Api.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using YourFavECommerce.Api.DTOs.Requests;
+using YourFavECommerce.Api.Mapping;
+using YourFavECommerce.Api.Services.IServcies;
+using Mapster;
+using YourFavECommerce.Api.DTOs.Responses;
 using YourFavECommerce.Api.Models;
 
 namespace YourFavECommerce.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController(ICategoryService categoryService) : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICategoryService _categoryService = categoryService;
 
-        public CategoriesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
 
         [HttpGet("")]
         public IActionResult GetAll()
         {
-            var categories = _context.Categories.ToList();
+            var categories = _categoryService.GetAll();
 
-            return Ok(categories);
+            return Ok(categories.Adapt<IEnumerable<CatgeoryResponse>>());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id) 
         {
-            var categroy = _context.Categories.Find(id);
+            var categroy = _categoryService.Get(e => e.Id == id);
 
             //if (categroy == null)
             //    return NotFound();
 
             //return Ok(categroy);
 
-            return categroy == null ?  NotFound() : Ok(categroy);
+            return categroy == null ?  NotFound() : Ok(categroy.Adapt<CatgeoryResponse>());
         }
 
         [HttpPost("")]
-        public IActionResult Create(Category category)
+        public IActionResult Create([FromBody] CatgeoryRequest category)
         {
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            var categoryInDb = _categoryService.Add(category.Adapt<Category>());
 
             //return Created($"{Request.Scheme}://{Request.Host}/api/Categories/{category.Id}", category);
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+
+            if(categoryInDb != null)
+                return CreatedAtAction(nameof(GetById), new { id = categoryInDb.Id }, categoryInDb);
+
+            return NotFound();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int id, Category category)
+        public IActionResult Update([FromRoute] int id, [FromBody] CatgeoryRequest category)
         {
-            var categroyInDb = _context.Categories.AsNoTracking().FirstOrDefault(e => e.Id == id);
+            var categroyInDb = _categoryService.Edit(id, category.Adapt<Category>());
 
-            if (categroyInDb != null)
+            if (categroyInDb)
             {
-                category.Id = id;
-
-                _context.Categories.Update(category);
-                _context.SaveChanges();
-
                 return NoContent();
             }
 
@@ -68,17 +64,14 @@ namespace YourFavECommerce.Api.Controllers
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id) {
-            var categroy = _context.Categories.Find(id);
-            if(categroy == null)
+            var categroyInDb = _categoryService.Remove(id);
+
+            if (categroyInDb)
             {
-                return NotFound();
+                return NoContent();
             }
 
-            _context.Categories.Remove(categroy);
-            _context.SaveChanges();
-
-            return NoContent();
+            return NotFound();
         }
-
     }
 }
