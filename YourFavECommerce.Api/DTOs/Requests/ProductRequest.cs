@@ -8,7 +8,7 @@ namespace YourFavECommerce.Api.DTOs.Requests
         decimal Price,
         int Quantity,
         double Rate,
-        IFormFile file,
+        IFormFile? File,
         bool Status,
         decimal Discount,
         int CategoryId
