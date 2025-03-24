@@ -17,9 +17,21 @@ namespace YourFavECommerce.Api.Controllers
         private readonly ApplicationDbContext _context = context;
 
         [HttpGet("")]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] string? query, [FromQuery] int page = 1, [FromQuery] int limit = 10)
         {
-            var products = _context.Products.ToList();
+            IQueryable<Product> products = _context.Products;
+
+            // More Logic
+            if(query != null)
+                products = products.Where(e => e.Name.Contains(query));
+
+            if (page <= 0 || limit <= 0)
+            {
+                page = 1;
+                limit = 10;
+            }
+
+            products = products.Skip((page - 1) * limit).Take(limit);
 
             return Ok(products.Adapt<IEnumerable<ProductResponse>>());
         }
