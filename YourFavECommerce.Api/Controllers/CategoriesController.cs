@@ -5,9 +5,11 @@ using YourFavECommerce.Api.Services.IServcies;
 using Mapster;
 using YourFavECommerce.Api.DTOs.Responses;
 using YourFavECommerce.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace YourFavECommerce.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController(ICategoryService categoryService) : ControllerBase
