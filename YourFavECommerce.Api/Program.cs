@@ -34,6 +34,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandServices, BrandServices>();
 
 var app = builder.Build();
 
