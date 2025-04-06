@@ -7,6 +7,10 @@ using YourFavECommerce.Api.DTOs.Responses;
 using YourFavECommerce.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using YourFavECommerce.Api.Validator;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using FluentValidation;
 
 namespace YourFavECommerce.Api.Controllers
 {
@@ -40,10 +44,23 @@ namespace YourFavECommerce.Api.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Create([FromBody] CatgeoryRequest category, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CatgeoryRequest category, CancellationToken cancellationToken, [FromServices] IValidator<CatgeoryRequest> validator)
         {
             //if (!ModelState.IsValid)
             //    return ValidationProblem(ModelState);
+
+            //ValidationResult results = await validator.ValidateAsync(category);
+
+            //if(!results.IsValid)
+            //{
+            //    ModelStateDictionary keyValuePairs = new();
+            //    foreach (var failure in results.Errors)
+            //    {
+            //        keyValuePairs.AddModelError(failure.PropertyName, failure.ErrorMessage);
+            //    }
+
+            //    return ValidationProblem(keyValuePairs);
+            //}
 
             var categoryInDb = await _categoryService.AddAsync(category.Adapt<Category>(), cancellationToken);
 

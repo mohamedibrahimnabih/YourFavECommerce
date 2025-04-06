@@ -22,7 +22,7 @@ namespace YourFavECommerce.Api.DTOs.Requests
     //}
 
     public record CatgeoryRequest(
-        [Required] string Name,
+        string Name,
         string? Note,
         [AllowedValues(true, false, ErrorMessage = "true / false only are allowed.")] bool Status
     );

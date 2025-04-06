@@ -1,13 +1,18 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using System;
 using System.Reflection;
 using YourFavECommerce.Api.Data;
+using YourFavECommerce.Api.DTOs.Requests;
 using YourFavECommerce.Api.Models;
 using YourFavECommerce.Api.Services;
 using YourFavECommerce.Api.Services.IServcies;
+using YourFavECommerce.Api.Validator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +40,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandServices, BrandServices>();
+
+//builder.Services.AddScoped<IValidator<CatgeoryRequest>, CatgeoryValidator>();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
