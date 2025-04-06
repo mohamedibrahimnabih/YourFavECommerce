@@ -11,7 +11,7 @@ using YourFavECommerce.Api.Services.IServcies;
 
 namespace YourFavECommerce.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController(ApplicationDbContext context) : ControllerBase

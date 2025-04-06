@@ -6,10 +6,11 @@ using Mapster;
 using YourFavECommerce.Api.DTOs.Responses;
 using YourFavECommerce.Api.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace YourFavECommerce.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController(ICategoryService categoryService) : ControllerBase
@@ -18,9 +19,9 @@ namespace YourFavECommerce.Api.Controllers
 
 
         [HttpGet("")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var categories = _categoryService.GetAll();
+            var categories = await _categoryService.GetAsync();
 
             return Ok(categories.Adapt<IEnumerable<CatgeoryResponse>>());
         }
@@ -28,7 +29,7 @@ namespace YourFavECommerce.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id) 
         {
-            var categroy = _categoryService.Get(e => e.Id == id);
+            var categroy = _categoryService.GetOne(e => e.Id == id);
 
             //if (categroy == null)
             //    return NotFound();
@@ -39,12 +40,12 @@ namespace YourFavECommerce.Api.Controllers
         }
 
         [HttpPost("")]
-        public IActionResult Create([FromBody] CatgeoryRequest category)
+        public async Task<IActionResult> Create([FromBody] CatgeoryRequest category, CancellationToken cancellationToken)
         {
             //if (!ModelState.IsValid)
             //    return ValidationProblem(ModelState);
 
-            var categoryInDb = _categoryService.Add(category.Adapt<Category>());
+            var categoryInDb = await _categoryService.AddAsync(category.Adapt<Category>(), cancellationToken);
 
             //return Created($"{Request.Scheme}://{Request.Host}/api/Categories/{category.Id}", category);
 
@@ -55,12 +56,12 @@ namespace YourFavECommerce.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] CatgeoryRequest category)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CatgeoryRequest category)
         {
             //if (!ModelState.IsValid)
             //    return ValidationProblem(ModelState);
 
-            var categroyInDb = _categoryService.Edit(id, category.Adapt<Category>());
+            var categroyInDb = await _categoryService.EditAsync(id, category.Adapt<Category>());
 
             if (categroyInDb)
             {
@@ -71,8 +72,8 @@ namespace YourFavECommerce.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id) {
-            var categroyInDb = _categoryService.Remove(id);
+        public async Task<IActionResult> Delete([FromRoute] int id) {
+            var categroyInDb = await _categoryService.RemoveAsync(id);
 
             if (categroyInDb)
             {

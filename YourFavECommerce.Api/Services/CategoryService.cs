@@ -1,35 +1,29 @@
 ﻿using System.Linq.Expressions;
+using System.Threading.Tasks;
 using YourFavECommerce.Api.Data;
 using YourFavECommerce.Api.Models;
 using YourFavECommerce.Api.Services.IServcies;
 
 namespace YourFavECommerce.Api.Services
 {
-    public class CategoryService : ICategoryService
+    public class CategoryService : Service<Category>, ICategoryService
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public CategoryService(ApplicationDbContext dbContext)
+        public CategoryService(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public Category Add(Category category)
-        {
-            _dbContext.Categories.Add(category);
-            _dbContext.SaveChanges();
-
-            return category;
-        }
-
-        public bool Edit(int id, Category category)
+        public async Task<bool> EditAsync(int id, Category category, CancellationToken cancellationToken = default)
         {
             Category? categoryInDb = _dbContext.Categories.Find(id);
 
             if (categoryInDb != null)
             {
-                _dbContext.Categories.Update(category);
-                _dbContext.SaveChanges();
+                categoryInDb.Name = category.Name;
+                categoryInDb.Description = category.Description;
+                await _dbContext.SaveChangesAsync();
 
                 return true;
             }
@@ -37,18 +31,14 @@ namespace YourFavECommerce.Api.Services
             return false;
         }
 
-        public Category? Get(Expression<Func<Category, bool>> expression) =>  _dbContext.Categories.FirstOrDefault(expression);
-
-        public IEnumerable<Category> GetAll() => _dbContext.Categories.ToList();
-
-        public bool Remove(int id)
+        public async Task<bool> UpdateToggleAsync(int id, CancellationToken cancellationToken = default)
         {
             Category? categoryInDb = _dbContext.Categories.Find(id);
 
             if (categoryInDb != null)
             {
-                _dbContext.Categories.Remove(categoryInDb);
-                _dbContext.SaveChanges();
+                categoryInDb.Status = !categoryInDb.Status;
+                await _dbContext.SaveChangesAsync();
 
                 return true;
             }
