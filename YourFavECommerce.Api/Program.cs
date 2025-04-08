@@ -38,8 +38,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandServices, BrandServices>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 //builder.Services.AddScoped<IValidator<CatgeoryRequest>, CatgeoryValidator>();
 builder.Services.AddFluentValidationAutoValidation();
@@ -57,6 +61,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 

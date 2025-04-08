@@ -21,7 +21,6 @@ namespace YourFavECommerce.Api.Services
         public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbSet.AddAsync(entity, cancellationToken);
-            await _dbContext.SaveChangesAsync();
 
             return entity;
         }
@@ -59,19 +58,31 @@ namespace YourFavECommerce.Api.Services
             return await entities.ToListAsync();
         }
 
-        public async Task<bool> RemoveAsync(int id, CancellationToken cancellationToken = default)
+        public bool Remove(int id, CancellationToken cancellationToken = default)
         {
             T? entityInDB = _dbSet.Find(id);
 
             if (entityInDB != null)
             {
                 _dbSet.Remove(entityInDB);
-                await _dbContext.SaveChangesAsync();
 
                 return true;
             }
 
             return false;
+        }
+
+        public async Task<bool> CommitAsync()
+        {
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

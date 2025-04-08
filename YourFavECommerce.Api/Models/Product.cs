@@ -1,4 +1,6 @@
-﻿namespace YourFavECommerce.Api.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourFavECommerce.Api.Models
 {
     public class Product
     {
@@ -14,7 +16,7 @@
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
 
-        public int BrandId { get; set; }
-        public Brand Brand { get; set; } = null!;
+        public int? BrandId { get; set; }
+        public Brand? Brand { get; set; }
     }
 }

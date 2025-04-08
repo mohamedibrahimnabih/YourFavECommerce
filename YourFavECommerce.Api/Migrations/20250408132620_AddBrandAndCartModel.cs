@@ -5,7 +5,7 @@
 namespace YourFavECommerce.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class brand : Migration
+    public partial class AddBrandAndCartModel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,8 +14,7 @@ namespace YourFavECommerce.Api.Migrations
                 name: "BrandId",
                 table: "Products",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "Brands",
@@ -32,18 +31,47 @@ namespace YourFavECommerce.Api.Migrations
                     table.PrimaryKey("PK_Brands", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => new { x.ProductId, x.ApplicationUserId });
+                    table.ForeignKey(
+                        name: "FK_Carts_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Carts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandId",
                 table: "Products",
                 column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_ApplicationUserId",
+                table: "Carts",
+                column: "ApplicationUserId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Products_Brands_BrandId",
                 table: "Products",
                 column: "BrandId",
                 principalTable: "Brands",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
@@ -55,6 +83,9 @@ namespace YourFavECommerce.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Brands");
+
+            migrationBuilder.DropTable(
+                name: "Carts");
 
             migrationBuilder.DropIndex(
                 name: "IX_Products_BrandId",

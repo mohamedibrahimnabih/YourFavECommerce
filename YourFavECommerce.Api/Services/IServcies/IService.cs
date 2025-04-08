@@ -9,7 +9,9 @@ namespace YourFavECommerce.Api.Services.IServcies
         T? GetOne(Expression<Func<T, bool>> expression, Expression<Func<T, object>>[]? includes = null, bool tracked = true);
 
         Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
-        
-        Task<bool> RemoveAsync(int id, CancellationToken cancellationToken = default);
+
+        bool Remove(int id, CancellationToken cancellationToken = default);
+
+        Task<bool> CommitAsync();
     }
 }

@@ -63,6 +63,7 @@ namespace YourFavECommerce.Api.Controllers
             //}
 
             var categoryInDb = await _categoryService.AddAsync(category.Adapt<Category>(), cancellationToken);
+            await _categoryService.CommitAsync();
 
             //return Created($"{Request.Scheme}://{Request.Host}/api/Categories/{category.Id}", category);
 
@@ -90,10 +91,11 @@ namespace YourFavECommerce.Api.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id) {
-            var categroyInDb = await _categoryService.RemoveAsync(id);
+            var categroyInDb = _categoryService.Remove(id);
 
             if (categroyInDb)
             {
+                await _categoryService.CommitAsync();
                 return NoContent();
             }
 

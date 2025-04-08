@@ -266,6 +266,24 @@ namespace YourFavECommerce.Api.Migrations
                     b.ToTable("Brands");
                 });
 
+            modelBuilder.Entity("YourFavECommerce.Api.Models.Cart", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "ApplicationUserId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("YourFavECommerce.Api.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -297,7 +315,7 @@ namespace YourFavECommerce.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BrandId")
+                    b.Property<int?>("BrandId")
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -389,13 +407,30 @@ namespace YourFavECommerce.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("YourFavECommerce.Api.Models.Cart", b =>
+                {
+                    b.HasOne("YourFavECommerce.Api.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("YourFavECommerce.Api.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("YourFavECommerce.Api.Models.Product", b =>
                 {
                     b.HasOne("YourFavECommerce.Api.Models.Brand", "Brand")
                         .WithMany("Products")
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BrandId");
 
                     b.HasOne("YourFavECommerce.Api.Models.Category", "Category")
                         .WithMany("Products")
